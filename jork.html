@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>手机关机中...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            .shutdown-animation {
+                animation: shutdown 5s forwards;
+            }
+            .progress-animation {
+                animation: progress 3s forwards;
+            }
+            @keyframes shutdown {
+                0% { opacity: 0; }
+                20% { opacity: 1; }
+                80% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+            @keyframes progress {
+                0% { width: 0%; }
+                100% { width: 100%; }
+            }
+            .power-icon-pulse {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-black m-0 p-0 overflow-hidden h-screen flex items-center justify-center">
+    <!-- 关机界面容器 -->
+    <div class="shutdown-animation w-full h-full flex flex-col items-center justify-center bg-[#1a1a1a] p-6 text-white">
+        <!-- 电源图标 -->
+        <div class="mb-10 power-icon-pulse">
+            <i class="fa fa-power-off text-6xl text-gray-300"></i>
+        </div>
+        
+        <!-- 关机文本 -->
+        <h1 class="text-2xl md:text-3xl font-light mb-8 text-center text-shadow">正在关机...</h1>
+        
+        <!-- 进度条容器 -->
+        <div class="w-full max-w-xs h-1.5 bg-gray-700 rounded-full overflow-hidden mb-6">
+            <div class="progress-animation h-full bg-gray-300 rounded-full"></div>
+        </div>
+        
+        <!-- 状态文本 -->
+        <p class="text-sm text-gray-400" id="status-text">请稍候，系统正在关闭所有应用程序</p>
+        
+        <!-- 底部提示（有些手机会显示） -->
+        <div class="absolute bottom-10 text-xs text-gray-500">
+            <p>长按电源键可强制重启</p>
+        </div>
+    </div>
+
+    <script>
+        // 模拟状态变化
+        const statusTexts = [
+            "请稍候，系统正在关闭所有应用程序",
+            "正在保存系统设置...",
+            "正在关闭核心服务...",
+            "即将关机..."
+        ];
+        
+        let textIndex = 0;
+        const statusElement = document.getElementById('status-text');
+        
+        // 每隔一段时间更新状态文本
+        const textInterval = setInterval(() => {
+            textIndex++;
+            if (textIndex < statusTexts.length) {
+                statusElement.textContent = statusTexts[textIndex];
+            } else {
+                clearInterval(textInterval);
+            }
+        }, 1000);
+        
+        // 模拟完全关机后可以点击恢复
+        setTimeout(() => {
+            // 移除所有可能的提示文字
+            document.body.addEventListener('click', () => {
+                document.body.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center bg-white p-6">
+                        <div class="text-green-500 text-6xl mb-6">
+                            <i class="fa fa-smile-o"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">被整蛊啦！</h2>
+                        <p class="text-gray-600 text-center max-w-xs">这只是一个模拟关机的页面，你的手机安然无恙~</p>
+                    </div>
+                `;
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
